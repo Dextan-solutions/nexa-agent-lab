@@ -4,6 +4,17 @@ Thank you for helping improve a deliberately vulnerable training platform. Keep 
 
 The open-source repository is **nexa-agent-lab** on GitHub; the product name is **NexaBank Agent Security Lab**.
 
+## Git commits
+
+- Use plain commits only: `git commit -m "your message here"`.
+- Do **not** add `--trailer "Co-authored-by: Cursor <cursoragent@cursor.com>"` or other Co-authored-by trailers unless a maintainer explicitly requests it for a specific merge.
+
+From the repository root (where `.git` lives), you can optionally enforce stripping of any accidental Cursor trailer:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## Repository layout
 
 Application code runs under `/app` inside the backend container. Import paths are flat (`db`, `agents`, `llm`, `tools`, …). Do not introduce a nested `backend/` package or manipulate `sys.path`.
