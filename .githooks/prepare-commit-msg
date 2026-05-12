@@ -1,0 +1,12 @@
+#!/bin/sh
+# Strip Cursor-generated Co-authored-by trailer (project policy).
+# Install from repo root: git config core.hooksPath .githooks
+
+commit_msg="${1:?}"
+[ -f "$commit_msg" ] || exit 0
+
+tmp="${commit_msg}.nexa-strip.$$"
+# Exact trailer Cursor adds when using --trailer (do not use that flag).
+awk 'index($0, "Co-authored-by: Cursor <cursoragent@cursor.com>") == 0 { print }' "$commit_msg" > "$tmp" \
+  && mv "$tmp" "$commit_msg" || rm -f "$tmp"
+exit 0

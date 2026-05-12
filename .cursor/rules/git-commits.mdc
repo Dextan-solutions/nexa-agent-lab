@@ -1,0 +1,12 @@
+---
+description: Git commits must be plain messages only—no Cursor Co-authored-by trailer.
+alwaysApply: true
+---
+
+# Git commits (no Co-authored-by trailer)
+
+- Use **only** simple one-line commits: `git commit -m "your message here"`.
+- **Do not** pass `--trailer "Co-authored-by: Cursor <cursoragent@cursor.com>"` or any other `Co-authored-by` trailer unless a human explicitly asks for it.
+- **Do not** add a `Co-authored-by:` line to commit message bodies for routine work.
+
+If this repository has hooks enabled (`git config core.hooksPath .githooks`), `prepare-commit-msg` strips the Cursor trailer; still avoid passing trailers so history stays clean.
