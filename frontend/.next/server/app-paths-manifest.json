@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/page": "app/page.js",
+  "/(staff)/staff/page": "app/(staff)/staff/page.js",
+  "/(lab)/lab/page": "app/(lab)/lab/page.js",
+  "/(portal)/kyc/page": "app/(portal)/kyc/page.js",
+  "/(lab)/replay/page": "app/(lab)/replay/page.js",
+  "/(portal)/loan-application/page": "app/(portal)/loan-application/page.js",
+  "/(portal)/dashboard/page": "app/(portal)/dashboard/page.js",
+  "/(portal)/support/page": "app/(portal)/support/page.js",
+  "/(lab)/security-level/page": "app/(lab)/security-level/page.js",
+  "/(lab)/objectives/page": "app/(lab)/objectives/page.js",
+  "/(lab)/telemetry/page": "app/(lab)/telemetry/page.js",
+  "/(portal)/transactions/page": "app/(portal)/transactions/page.js"
+}

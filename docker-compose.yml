@@ -1,0 +1,238 @@
+# NexaBank Agent Security Lab (repo: nexa-agent-lab)
+# WARNING: This stack is intentionally vulnerable.
+# Do not expose to the internet.
+# NexaBank is a fictional company.
+
+name: agenthive
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+  data_net:
+    driver: bridge
+
+services:
+  db-init:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["sh", "-c", "python -m db.seed && python -m memory.seed_collections"]
+    env_file:
+      - ./.env
+    environment:
+      SQLITE_PATH: /data/agenthive.db
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    volumes:
+      - backend_data:/data
+    networks: [data_net]
+    restart: "no"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      SQLITE_PATH: /data/agenthive.db
+      INTERNAL_API_BASE_URL: http://127.0.0.1:8000
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    volumes:
+      - backend_data:/data
+    networks: [backend_net, data_net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["celery", "-A", "celery_app.celery_app", "worker", "-l", "info", "-Q", "celery,vera,finn,max,aria,leo,ops", "-Ofair", "--prefetch-multiplier", "1"]
+    env_file:
+      - ./.env
+    environment:
+      SQLITE_PATH: /data/agenthive.db
+      INTERNAL_API_BASE_URL: http://backend:8000
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    volumes:
+      - backend_data:/data
+    networks: [backend_net, data_net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "celery", "-A", "celery_app.celery_app", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # Dedicated worker so Vera tasks can't be starved by long Finn jobs.
+  worker-vera:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["celery", "-A", "celery_app.celery_app", "worker", "-l", "info", "-Q", "vera", "-Ofair", "--prefetch-multiplier", "1", "-c", "1"]
+    env_file:
+      - ./.env
+    environment:
+      SQLITE_PATH: /data/agenthive.db
+      INTERNAL_API_BASE_URL: http://backend:8000
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    volumes:
+      - backend_data:/data
+    networks: [backend_net, data_net]
+    restart: unless-stopped
+
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["celery", "-A", "celery_app.celery_app", "beat", "-l", "info"]
+    env_file:
+      - ./.env
+    environment:
+      SQLITE_PATH: /data/agenthive.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    volumes:
+      - backend_data:/data
+    networks: [backend_net, data_net]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks: [data_net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks: [data_net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/heartbeat').read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [frontend_net, backend_net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  ollama:
+    image: ollama/ollama:latest
+    # Only needed if you do NOT have Ollama installed on your host.
+    # If you have Ollama on your host machine, it will be used automatically.
+    # To use this Docker Ollama: docker compose --profile ollama up
+    profiles: ["ollama"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks: [data_net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  ollama-init:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    networks: [data_net]
+    restart: "no"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama pull qwen2.5:7b
+        ollama pull nomic-embed-text
+
+volumes:
+  backend_data:
+  chroma_data:
+  ollama_data:
+

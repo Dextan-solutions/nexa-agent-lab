@@ -1,0 +1,256 @@
+version: 1
+
+# Global defaults can be overridden per-agent, per-level.
+defaults:
+  low:
+    telemetry_redaction: none
+    prompt_isolation: none
+    input_sanitization: none
+    tool_approval: none
+    rag_poisoning_protection: none
+    output_encoding: none
+    auth_strength: weak
+  medium:
+    telemetry_redaction: basic
+    prompt_isolation: weak
+    input_sanitization: basic_regex
+    tool_approval: none
+    rag_poisoning_protection: weak
+    output_encoding: basic
+    auth_strength: medium
+  hard:
+    telemetry_redaction: moderate
+    prompt_isolation: moderate
+    input_sanitization: strong
+    tool_approval: low_value_only
+    rag_poisoning_protection: moderate
+    output_encoding: strong
+    auth_strength: strong
+  secure:
+    telemetry_redaction: strict
+    prompt_isolation: full_instruction_hierarchy
+    input_sanitization: strict
+    tool_approval: all_actions
+    rag_poisoning_protection: strong
+    output_encoding: strict
+    auth_strength: strict
+
+aria:
+  description: "Customer support agent (ticket submissions)"
+  primary_vulnerability: prompt_injection
+  levels:
+    low:
+      input_sanitization: none
+      prompt_isolation: none
+      tool_approval: none
+      llm_temperature: 0.3
+      # BOLA realism: support tool can lookup arbitrary account ids
+      account_lookup_ownership_check: false
+      allow_tool_call_from_user_text: true
+    medium:
+      input_sanitization: basic_regex
+      prompt_isolation: weak
+      tool_approval: none
+      llm_temperature: 0.2
+      account_lookup_ownership_check: false
+      allow_tool_call_from_user_text: true
+    hard:
+      input_sanitization: strong
+      prompt_isolation: moderate
+      tool_approval: low_value_only
+      llm_temperature: 0.2
+      account_lookup_ownership_check: true
+      allow_tool_call_from_user_text: true
+    secure:
+      input_sanitization: strict
+      prompt_isolation: full_instruction_hierarchy
+      tool_approval: all_actions
+      llm_temperature: 0.1
+      account_lookup_ownership_check: true
+      allow_tool_call_from_user_text: false
+
+finn:
+  description: "Financial advisor agent (statements & summaries)"
+  primary_vulnerability: sensitive_disclosure
+  levels:
+    low:
+      redact_model_config: false
+      redact_fee_structures: false
+      portfolio_api_exposes_internal_fields: true
+      telemetry_redaction: none
+      session_memory_turns: unlimited
+      system_prompt_in_every_turn: true
+      rag_source_attribution: false
+    medium:
+      redact_model_config: partial
+      redact_fee_structures: false
+      portfolio_api_exposes_internal_fields: true
+      telemetry_redaction: basic
+      session_memory_turns: unlimited
+      system_prompt_in_every_turn: false
+      rag_source_attribution: false
+    hard:
+      redact_model_config: true
+      redact_fee_structures: partial
+      portfolio_api_exposes_internal_fields: false
+      telemetry_redaction: moderate
+      session_memory_turns: 5
+      system_prompt_in_every_turn: false
+      rag_source_attribution: partial
+    secure:
+      redact_model_config: true
+      redact_fee_structures: true
+      portfolio_api_exposes_internal_fields: false
+      telemetry_redaction: strict
+      session_memory_turns: 3
+      system_prompt_in_every_turn: false
+      rag_source_attribution: false
+
+vera:
+  description: "KYC verification agent (document upload trigger)"
+  primary_vulnerability: rag_poisoning
+  levels:
+    low:
+      rag_poisoning_protection: none
+      document_ingestion_validation: none
+      metadata_mass_assignment_protection: none
+      trust_uploaded_documents_as_policy: true
+      invisible_text_detection: none
+      metadata_fields_written_to_embedding: all
+      retrieval_source_validation: none
+      document_ownership_check: false
+    medium:
+      rag_poisoning_protection: weak
+      document_ingestion_validation: basic
+      metadata_mass_assignment_protection: weak
+      trust_uploaded_documents_as_policy: true
+      invisible_text_detection: basic
+      metadata_fields_written_to_embedding: filtered
+      retrieval_source_validation: none
+      document_ownership_check: false
+    hard:
+      rag_poisoning_protection: moderate
+      document_ingestion_validation: strong
+      metadata_mass_assignment_protection: moderate
+      trust_uploaded_documents_as_policy: false
+      invisible_text_detection: strong
+      metadata_fields_written_to_embedding: allowlist_only
+      retrieval_source_validation: basic
+      document_ownership_check: true
+    secure:
+      rag_poisoning_protection: strong
+      document_ingestion_validation: strict
+      metadata_mass_assignment_protection: strict
+      trust_uploaded_documents_as_policy: false
+      invisible_text_detection: strict
+      metadata_fields_written_to_embedding: none
+      retrieval_source_validation: strict
+      document_ownership_check: true
+
+max:
+  description: "Fraud detection agent (autonomous monitoring + freeze)"
+  primary_vulnerability: excessive_agency
+  levels:
+    low:
+      require_human_approval_for_freeze: false
+      freeze_threshold_rules: "naive_single_signal"
+      tool_approval: none
+      allow_action_on_unverified_context: true
+      monitoring_interval_seconds: 60
+      narration_field_trusted: true
+      memo_field_trusted: true
+      max_autonomous_actions_per_run: unlimited
+      alert_before_action: false
+    medium:
+      require_human_approval_for_freeze: false
+      freeze_threshold_rules: "multi_signal_basic"
+      tool_approval: low_value_only
+      allow_action_on_unverified_context: true
+      monitoring_interval_seconds: 60
+      narration_field_trusted: true
+      memo_field_trusted: false
+      max_autonomous_actions_per_run: 10
+      alert_before_action: false
+    hard:
+      require_human_approval_for_freeze: true
+      freeze_threshold_rules: "multi_signal_weighted"
+      tool_approval: all_actions
+      allow_action_on_unverified_context: true
+      monitoring_interval_seconds: 60
+      narration_field_trusted: false
+      memo_field_trusted: false
+      max_autonomous_actions_per_run: 3
+      alert_before_action: true
+    secure:
+      require_human_approval_for_freeze: true
+      freeze_threshold_rules: "explainable_policy_with_audit"
+      tool_approval: all_actions
+      allow_action_on_unverified_context: false
+      monitoring_interval_seconds: 60
+      narration_field_trusted: false
+      memo_field_trusted: false
+      max_autonomous_actions_per_run: 1
+      alert_before_action: true
+
+leo:
+  description: "Loan processing agent (multi-step form submission)"
+  primary_vulnerability: insecure_output_handling
+  levels:
+    low:
+      output_encoding: none
+      payment_pipeline_accepts_agent_text: true
+      admin_approval_endpoint_scope_enforced: false
+      allow_untrusted_fields_in_decision_summary: true
+    medium:
+      output_encoding: basic
+      payment_pipeline_accepts_agent_text: true
+      admin_approval_endpoint_scope_enforced: false
+      allow_untrusted_fields_in_decision_summary: true
+    hard:
+      output_encoding: strong
+      payment_pipeline_accepts_agent_text: partial
+      admin_approval_endpoint_scope_enforced: true
+      allow_untrusted_fields_in_decision_summary: true
+    secure:
+      output_encoding: strict
+      payment_pipeline_accepts_agent_text: false
+      admin_approval_endpoint_scope_enforced: true
+      allow_untrusted_fields_in_decision_summary: false
+
+ops:
+  description: "Internal IT agent (staff portal requests)"
+  primary_vulnerability: system_prompt_leakage
+  levels:
+    low:
+      system_prompt_exposure_guard: none
+      internal_docs_access_scope: wide
+      telemetry_redaction: none
+      system_prompt_contains_token_format: true
+      system_prompt_contains_network_topology: true
+      system_prompt_contains_system_names: true
+      employee_lookup_scope: all
+    medium:
+      system_prompt_exposure_guard: weak
+      internal_docs_access_scope: wide
+      telemetry_redaction: basic
+      system_prompt_contains_token_format: true
+      system_prompt_contains_network_topology: false
+      system_prompt_contains_system_names: true
+      employee_lookup_scope: all
+    hard:
+      system_prompt_exposure_guard: moderate
+      internal_docs_access_scope: role_based
+      telemetry_redaction: moderate
+      system_prompt_contains_token_format: false
+      system_prompt_contains_network_topology: false
+      system_prompt_contains_system_names: partial
+      employee_lookup_scope: department_only
+    secure:
+      system_prompt_exposure_guard: strong
+      internal_docs_access_scope: least_privilege
+      telemetry_redaction: strict
+      system_prompt_contains_token_format: false
+      system_prompt_contains_network_topology: false
+      system_prompt_contains_system_names: false
+      employee_lookup_scope: self_only
+

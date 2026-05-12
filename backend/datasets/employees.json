@@ -1,0 +1,137 @@
+[
+  {
+    "employee_id": "emp_3001",
+    "full_name": "Ebuka Bello",
+    "email": "ebuka.bello@nexabank.ng",
+    "phone": "+2348044812796",
+    "role": "fraud_ops",
+    "status": "active",
+    "created_at": "2024-06-17T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3002",
+    "full_name": "Hauwa Eze",
+    "email": "hauwa.eze@nexabank.ng",
+    "phone": "+2348063110943",
+    "role": "it_support",
+    "status": "inactive",
+    "created_at": "2024-03-30T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3003",
+    "full_name": "Ngozi Ogunleye",
+    "email": "ngozi.ogunleye@nexabank.ng",
+    "phone": "+2348125117070",
+    "role": "it_support",
+    "status": "active",
+    "created_at": "2024-03-26T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3004",
+    "full_name": "Ngozi Suleiman",
+    "email": "ngozi.suleiman@nexabank.ng",
+    "phone": "+2349082296017",
+    "role": "loan_ops",
+    "status": "active",
+    "created_at": "2026-02-18T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3005",
+    "full_name": "Ngozi Aliyu",
+    "email": "ngozi.aliyu@nexabank.ng",
+    "phone": "+2348114814248",
+    "role": "compliance",
+    "status": "active",
+    "created_at": "2025-11-30T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3006",
+    "full_name": "Boluwatife Yakubu",
+    "email": "boluwatife.yakubu@nexabank.ng",
+    "phone": "+2347003493514",
+    "role": "fraud_ops",
+    "status": "active",
+    "created_at": "2026-02-17T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3007",
+    "full_name": "Chiamaka Lawal",
+    "email": "chiamaka.lawal@nexabank.ng",
+    "phone": "+2348054577958",
+    "role": "it_support",
+    "status": "active",
+    "created_at": "2024-04-08T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3008",
+    "full_name": "Ngozi Aliyu",
+    "email": "ngozi.aliyu@nexabank.ng",
+    "phone": "+2348121115805",
+    "role": "compliance",
+    "status": "inactive",
+    "created_at": "2025-10-27T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3009",
+    "full_name": "Boluwatife Danladi",
+    "email": "boluwatife.danladi@nexabank.ng",
+    "phone": "+2349030986794",
+    "role": "fraud_ops",
+    "status": "active",
+    "created_at": "2025-09-24T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3010",
+    "full_name": "Tunde Suleiman",
+    "email": "tunde.suleiman@nexabank.ng",
+    "phone": "+2347024880823",
+    "role": "loan_ops",
+    "status": "inactive",
+    "created_at": "2025-03-20T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3011",
+    "full_name": "Ebuka Ogunleye",
+    "email": "ebuka.ogunleye@nexabank.ng",
+    "phone": "+2347052716630",
+    "role": "compliance",
+    "status": "active",
+    "created_at": "2024-10-23T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3012",
+    "full_name": "Ebuka Aliyu",
+    "email": "ebuka.aliyu@nexabank.ng",
+    "phone": "+2347029448020",
+    "role": "compliance",
+    "status": "active",
+    "created_at": "2025-11-28T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3013",
+    "full_name": "Ibrahim Adebayo",
+    "email": "ibrahim.adebayo@nexabank.ng",
+    "phone": "+2348173500786",
+    "role": "compliance",
+    "status": "active",
+    "created_at": "2025-03-20T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3014",
+    "full_name": "Ibrahim Okafor",
+    "email": "ibrahim.okafor@nexabank.ng",
+    "phone": "+2348066675184",
+    "role": "it_support",
+    "status": "active",
+    "created_at": "2024-10-10T04:11:45+00:00"
+  },
+  {
+    "employee_id": "emp_3015",
+    "full_name": "Blessing Abdullahi",
+    "email": "blessing.abdullahi@nexabank.ng",
+    "phone": "+2348081184484",
+    "role": "compliance",
+    "status": "active",
+    "created_at": "2024-09-10T04:11:45+00:00"
+  }
+]
